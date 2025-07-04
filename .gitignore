@@ -1,0 +1,13 @@
+# IDE 設定檔
+.idea/
+*.iml
+*.iws
+
+# VS Code 設定檔（可選）
+.vscode/
+
+# 其他常見的忽略項目
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
