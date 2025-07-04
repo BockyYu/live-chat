@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"exercise/pkg/schema"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
@@ -39,7 +40,7 @@ func main() {
 				return
 			}
 
-			var message Message
+			var message schema.Message
 			if err := json.Unmarshal(messageBytes, &message); err != nil {
 				log.Printf("解析訊息失敗: %v", err)
 				continue

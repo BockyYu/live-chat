@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"exercise/pkg/schema"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
@@ -18,7 +19,7 @@ type Client struct {
 	Conn     *websocket.Conn
 	Name     string
 	LastSeen time.Time
-	Messages []Message
+	Messages []schema.Message
 	mu       sync.Mutex
 }
 
@@ -103,7 +104,7 @@ func handleCustomerWebSocket(w http.ResponseWriter, r *http.Request) {
 		Conn:     conn,
 		Name:     fmt.Sprintf("客戶-%s", clientID),
 		LastSeen: time.Now(),
-		Messages: make([]Message, 0),
+		Messages: make([]schema.Message, 0),
 	}
 
 	clientManager.AddClient(client)
@@ -116,7 +117,7 @@ func handleCustomerWebSocket(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// 發送歡迎訊息
-	welcomeMsg := Message{
+	welcomeMsg := schema.Message{
 		From:      "系統",
 		Content:   fmt.Sprintf("歡迎！您的客戶編號是 %s，客服將為您服務", clientID),
 		Timestamp: time.Now(),
@@ -131,7 +132,7 @@ func handleCustomerWebSocket(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		message := Message{
+		message := schema.Message{
 			From:      client.Name,
 			Content:   string(messageBytes),
 			Timestamp: time.Now(),
@@ -155,7 +156,7 @@ func handleCustomerWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func sendMessageToClient(client *Client, message Message) {
+func sendMessageToClient(client *Client, message schema.Message) {
 	messageBytes, _ := json.Marshal(message)
 	client.Conn.WriteMessage(websocket.TextMessage, messageBytes)
 }
@@ -260,7 +261,7 @@ func sendMessageToCurrentClient(content string) {
 		return
 	}
 
-	message := Message{
+	message := schema.Message{
 		From:      "客服",
 		Content:   content,
 		Timestamp: time.Now(),
@@ -287,7 +288,7 @@ func showHistory(clientID string) {
 	}
 
 	client.mu.Lock()
-	messages := make([]Message, len(client.Messages))
+	messages := make([]schema.Message, len(client.Messages))
 	copy(messages, client.Messages)
 	client.mu.Unlock()
 
